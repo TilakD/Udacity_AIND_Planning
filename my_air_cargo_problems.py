@@ -165,8 +165,21 @@ class AirCargoProblem(Problem):
         :return: resulting state after action
         """
         # TODO implement
+        # use implementation from haveCake
         new_state = FluentState([], [])
-        return encode_state(new_state, self.state_map)
+        old_state = decode_state(state, self.state_map)
+        for fluent in old_state.pos:
+            if fluent not in action.effect_rem:
+                new_state.pos.append(fluent)
+        for fluent in action.effect_add:
+            if fluent not in new_state.pos:
+                new_state.pos.append(fluent)
+        for fluent in old_state.neg:
+            if fluent not in action.effect_add:
+                new_state.neg.append(fluent)
+        for fluent in action.effect_rem:
+            if fluent not in new_state.neg:
+                new_state.neg.append(fluent)
 
     def goal_test(self, state: str) -> bool:
         """ Test the state to see if goal is reached
