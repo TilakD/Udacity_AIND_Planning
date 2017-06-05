@@ -218,8 +218,19 @@ class AirCargoProblem(Problem):
         conditions by ignoring the preconditions required for an action to be
         executed.
         """
+        """
+        Russell-Norvig tells us that if we ignore pre-conditions then the
+        number of steps required to solve the relaxed problem is the number
+        of unsatisfied goals unless 1) one or more actions achieve multiple
+        goals, or 2) some actions undo the effects of others
+        For the purposes of this heuristic we ignore the second exception
+        so that we can continue to say that the number of steps required to 
+        solve the problem is greater than or equal to the number of unsatisfied 
+        goals thus rendering this "number of unsatisfied goals" heuristic 
+        an admissable approximation of ignoring pre-conditions.
+        """
+        
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
-        count = 0
         count = 0
         poss_effects = set(sum([a.effect_add for a in self.actions_list],[]))
         kb = PropKB()

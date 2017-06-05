@@ -310,6 +310,21 @@ class PlanningGraph():
         #   set iff all prerequisite literals for the action hold in S0.  This can be accomplished by testing
         #   to see if a proposed PgNode_a has prenodes that are a subset of the previous S level.  Once an
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
+        self.a_levels.append(set())
+        for act in self.all_actions:
+            # Have to create an a_node for every possible graph action,
+            #    just to check if its prenodes are in the parent s-level
+            n = PgNode_a(act)
+            if n.prenodes.issubset(self.s_levels[level]):
+                # Now we know n is a viable action at this level, so we need
+                #    to add it and connect it to the graph, as parent and child
+                for p in self.s_levels[level]:
+                    if p in n.prenodes:
+                        p.children.add(n)
+                        n.parents.add(p)
+                
+                self.a_levels[level].add(n)
+                
 
     def add_literal_level(self, level):
         """ add an S (literal) level to the Planning Graph
