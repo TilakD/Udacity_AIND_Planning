@@ -312,12 +312,8 @@ class PlanningGraph():
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
         self.a_levels.append(set())
         for act in self.all_actions:
-            # Have to create an a_node for every possible graph action,
-            #    just to check if its prenodes are in the parent s-level
             n = PgNode_a(act)
             if n.prenodes.issubset(self.s_levels[level]):
-                # Now we know n is a viable action at this level, so we need
-                #    to add it and connect it to the graph, as parent and child
                 for p in self.s_levels[level]:
                     if p in n.prenodes:
                         p.children.add(n)
@@ -343,11 +339,8 @@ class PlanningGraph():
         #   parent sets of the S nodes
         self.s_levels.append(set())
         for p in self.a_levels[level-1]:
-            # Throw all new effect states into the new level set
             self.s_levels[level] = self.s_levels[level].union(par.effnodes)
         for c in self.s_levels[level]:
-            # Now go back and make the child-parent connections, once the dust
-            #    has settled
             for p in self.a_levels[level-1]:
                 if c in par.effnodes:
                     c.parents.add(p)
@@ -410,7 +403,12 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
-        return False
+        for e in node_a1.action.effect_rem:
+            if e in node_a2.action.effect_add:
+                return True
+        for e in node_a2.action.effect_rem:
+            if e in node_a1.action.effect_add:
+                return True
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
