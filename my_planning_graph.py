@@ -312,8 +312,11 @@ class PlanningGraph():
         #   action node is added, it MUST be connected to the S node instances in the appropriate s_level set.
         self.a_levels.append(set())
         for a in self.all_actions:
+            #check if prenodes are in the parent s-level
             n = PgNode_a(a)
             if n.prenodes.issubset(self.s_levels[level]):
+                
+                #Connect aparent and child
                 for p in self.s_levels[level]:
                     if p in n.prenodes:
                         p.children.add(n)
@@ -340,6 +343,8 @@ class PlanningGraph():
         self.s_levels.append(set())
         for p in self.a_levels[level-1]:
             self.s_levels[level] = self.s_levels[level].union(p.effnodes)
+            
+            #Connect child and parent
         for c in self.s_levels[level]:
             for p in self.a_levels[level-1]:
                 if c in p.effnodes:
