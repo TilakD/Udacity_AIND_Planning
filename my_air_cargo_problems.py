@@ -183,6 +183,7 @@ class AirCargoProblem(Problem):
         for fluent in action.effect_rem:
             if fluent not in new_state.neg:
                 new_state.neg.append(fluent)
+        return encode_state(new_state,self.state_map)
 
     def goal_test(self, state: str) -> bool:
         """ Test the state to see if goal is reached
@@ -234,17 +235,13 @@ class AirCargoProblem(Problem):
         """
         
         # TODO implement (see Russell-Norvig Ed-3 10.2.3  or Russell-Norvig Ed-2 11.2)
-        count = 0
-        poss_effects = set(sum([a.effect_add for a in self.actions_list],[]))
+        action_count = 0
         kb = PropKB()
         kb.tell(decode_state(node.state, self.state_map).pos_sentence())
         for clause in self.goal:
             if clause not in kb.clauses:
-                if clause not in poss_effects:
-                    return float('infinity')
-                else:
-                    count += 1
-        return count
+                    action_count += 1
+        return action_count
 
 
 def air_cargo_p1() -> AirCargoProblem:
