@@ -143,16 +143,20 @@ class AirCargoProblem(Problem):
         kb = PropKB()
         kb.tell(decode_state(state, self.state_map).pos_sentence())
         for action in self.actions_list:
-            is_possible = True
+            is_action_possible = True
             for clause in action.precond_pos:
                 if clause not in kb.clauses:
-                    is_possible = False
-                    #break here???
-            for clause in action.precond_neg:
-                if clause in kb.clauses:
-                    is_possible = False
-            if is_possible:
+                    is_action_possible = False
+                    break
+            if is_action_possible:
+                for clause in action.precond_neg:
+                    if clause in kb.clauses:
+                        is_action_possible = False
+                        break
+                    
+            if is_action_possible:
                 possible_actions.append(action)
+                
         return possible_actions
 
     def result(self, state: str, action: Action):
@@ -165,7 +169,6 @@ class AirCargoProblem(Problem):
         :return: resulting state after action
         """
         # TODO implement
-        # use implementation from haveCake
         new_state = FluentState([], [])
         old_state = decode_state(state, self.state_map)
         for fluent in old_state.pos:
