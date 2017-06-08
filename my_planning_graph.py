@@ -408,11 +408,11 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Effects between nodes
-        for er in node_a1.action.effect_rem:
-            if er in node_a2.action.effect_add:
+        for e in node_a1.action.effect_rem:
+            if e in node_a2.action.effect_add:
                 return True
-        for er in node_a2.action.effect_rem:
-            if er in node_a1.action.effect_add:
+        for e in node_a2.action.effect_rem:
+            if e in node_a1.action.effect_add:
                 return True
         return False
 
@@ -457,6 +457,21 @@ class PlanningGraph():
         """
 
         # TODO test for Competing Needs between nodes
+        # Check if preonditions conflict
+        for pp in node_a1.action.precond_pos:
+            if pp in node_a2.action.precond_neg:
+                return True
+        for pp in node_a2.action.precond_pos:
+            if pp in node_a1.action.precond_neg:
+                return True
+        # Check if all of one node's parents are mutexed by one of the other's
+        for n2p in node_a2.parents:
+            if node_a1.parents.issubset(n2p.mutex):
+                return True
+        for n1p in node_a1.parents:
+            if node_a2.parents.issubset(n1p.mutex):
+                return True
+
         return False
 
     def update_s_mutex(self, nodeset: set):
