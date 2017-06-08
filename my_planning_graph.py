@@ -456,20 +456,11 @@ class PlanningGraph():
         """
 
         # TODO test for Competing Needs between nodes
-        # Check if preonditions conflict
-        for pp in node_a1.action.precond_pos:
-            if pp in node_a2.action.precond_neg:
-                return True
-        for pp in node_a2.action.precond_pos:
-            if pp in node_a1.action.precond_neg:
-                return True
-        # Check if all of one node's parents are mutexed by one of the other's
-        for n2p in node_a2.parents:
-            if node_a1.parents.issubset(n2p.mutex):
-                return True
-        for n1p in node_a1.parents:
-            if node_a2.parents.issubset(n1p.mutex):
-                return True
+        for a1_parent in node_a1.parents:
+            for a2_parent in node_a2.parents:
+                if a1_parent.is_mutex(a2_parent):
+                    return True
+        return False
 
     def update_s_mutex(self, nodeset: set):
         """ Determine and update sibling mutual exclusion for S-level nodes
@@ -525,7 +516,7 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for Inconsistent Support between nodes
-         for s1_parent in node_s1.parents:
+         for s1_parent in node_s1.parents:  
             for s2_parent in node_s2.parents:
                 if not s1_parent.is_mutex(s2_parent):
                     return False
