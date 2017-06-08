@@ -414,7 +414,7 @@ class PlanningGraph():
         for e in node_a2.action.effect_rem:
             if e in node_a1.action.effect_add:
                 return True
-        return False
+
 
     def interference_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
@@ -443,7 +443,6 @@ class PlanningGraph():
         for ea in node_a2.action.effect_add:
             if ea in node_a1.action.precond_neg:
                 return True
-        return False
 
     def competing_needs_mutex(self, node_a1: PgNode_a, node_a2: PgNode_a) -> bool:
         """
@@ -471,8 +470,6 @@ class PlanningGraph():
         for n1p in node_a1.parents:
             if node_a2.parents.issubset(n1p.mutex):
                 return True
-
-        return False
 
     def update_s_mutex(self, nodeset: set):
         """ Determine and update sibling mutual exclusion for S-level nodes
@@ -507,8 +504,10 @@ class PlanningGraph():
         :return: bool
         """
         # TODO test for negation between nodes
-        return False
+        if node_s1.symbol == node_s2.symbol and node_s1.is_pos != node_s2.is_pos:
+            return True
 
+    
     def inconsistent_support_mutex(self, node_s1: PgNode_s, node_s2: PgNode_s):
         """
         Test a pair of state literals for mutual exclusion, returning True if
